@@ -54,8 +54,8 @@ namespace Plugin.MediaManager
         {
             var icon = (_appliactionContext.Resources?.GetIdentifier("xam_mediamanager_notify_ic", "drawable", _appliactionContext?.PackageName)).GetValueOrDefault(0);
 
-            _notificationStyle.SetMediaSession(_sessionToken);
-            _notificationStyle.SetCancelButtonIntent(_pendingCancelIntent);
+            //_notificationStyle.SetMediaSession(_sessionToken);
+            //_notificationStyle.SetCancelButtonIntent(_pendingCancelIntent);
 
             _builder = new NotificationCompat.Builder(_appliactionContext)
             {
