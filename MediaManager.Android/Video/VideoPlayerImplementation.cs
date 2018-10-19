@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -151,12 +151,45 @@ namespace Plugin.MediaManager
 			MediaFileFailed?.Invoke(this, e);
 		}
 
-        public TimeSpan Buffered => VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.BufferPercentage);
+        public TimeSpan Buffered
+        {
+            get
+            {
+                try
+                {
+                    return VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.BufferPercentage);
+                }
+                catch (System.Exception e) { }
+                return TimeSpan.MinValue;
+            }
+        }
 
-        public TimeSpan Duration => VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.Duration);
+        public TimeSpan Duration
+        {
+            get
+            {
+                try
+                {
+                    return VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.Duration);
+                }
+                catch (System.Exception e) { }
+                return TimeSpan.MinValue;
+            }
+        }
 
-        public TimeSpan Position => VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.CurrentPosition);
-		private int lastPosition = 0;
+        public TimeSpan Position
+        {
+            get
+            {
+                try
+                {
+                    return VideoViewCanvas == null ? TimeSpan.Zero : TimeSpan.FromSeconds(VideoViewCanvas.CurrentPosition);
+                }
+                catch (System.Exception e) { }
+                return TimeSpan.MinValue;
+            }
+        }
+        private int lastPosition = 0;
 
 		private MediaPlayerStatus _status = MediaPlayerStatus.Stopped;
         public MediaPlayerStatus Status

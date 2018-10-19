@@ -2,8 +2,8 @@
 #tool nuget:?package=gitlink
 #tool nuget:?package=vswhere
 #tool nuget:?package=NUnit.ConsoleRunner
-#addin nuget:?package=Cake.Incubator
-#addin nuget:?package=Cake.Git
+#addin "nuget:?package=Cake.Incubator&version=1.4.0"
+#addin nuget:?package=Cake.Git&version=0.16.0
 
 var sln = new FilePath("MediaManager.sln");
 var outputDir = new DirectoryPath("artifacts");
@@ -27,7 +27,7 @@ Task("Version").Does(() => {
 		UpdateAssemblyInfo = true,
 		OutputType = GitVersionOutput.Json
 	});
-
+	
 	Information("GitVersion -> {0}", versionInfo.Dump());
 });
 
@@ -96,9 +96,9 @@ Task("GitLink")
 	.IsDependentOn("UnitTest")
 	//pdbstr.exe and costura are not xplat currently
 	.WithCriteria(() => IsRunningOnWindows())
-	.WithCriteria(() => 
-		StringComparer.OrdinalIgnoreCase.Equals(versionInfo.BranchName, "develop") || 
-		IsMasterOrReleases())
+	//.WithCriteria(() => 
+	//	StringComparer.OrdinalIgnoreCase.Equals(versionInfo.BranchName, "develop") || 
+	//	IsMasterOrReleases())
 	.Does(() => 
 {
 	var projectsToIgnore = new string[] {
@@ -117,6 +117,11 @@ Task("GitLink")
         "MediaForms.Android",
         "MediaForms.iOS",
         "MediaForms",
+		"Plugin.MediaManager.ExoPlayer",
+		"Plugin.MediaManager.Reactive",
+		"Plugin.MediaManager.MacOS",
+		"Plugin.MediaManager.tvOS",
+		"Plugin.MediaManager.Tests",
 	};
 
 	GitLink("./", 
@@ -129,10 +134,11 @@ Task("GitLink")
 });
 
 Task("Package")
-	.IsDependentOn("GitLink")
-	.WithCriteria(() => 
-		StringComparer.OrdinalIgnoreCase.Equals(versionInfo.BranchName, "develop") || 
-		IsMasterOrReleases())
+	.IsDependentOn("Build")
+	//.IsDependentOn("UnitTest")
+	//.WithCriteria(() => 
+	//	StringComparer.OrdinalIgnoreCase.Equals(versionInfo.BranchName, "develop") || 
+	//	IsMasterOrReleases())
 	.Does(() => 
 {
 	var nugetSettings = new NuGetPackSettings {
@@ -153,10 +159,10 @@ Task("Package")
 
 	var nuspecs = new List<string> {
         "Plugin.MediaManager.nuspec",
-		"Plugin.MediaManager.ExoPlayer.nuspec",
-		"Plugin.MediaManager.Forms.nuspec",
-		"Plugin.MediaManager.Reactive.nuspec"		
+		"Plugin.MediaManager.Forms.nuspec"
 	};
+	// "Plugin.MediaManager.ExoPlayer.nuspec",
+	//"Plugin.MediaManager.Reactive.nuspec"		
 
 	foreach(var nuspec in nuspecs)
 	{
